@@ -27,9 +27,9 @@ chrome.contextMenus.onClicked.addListener(function(selectedText) {
 });
 
 function summarizeText(text) {
-    console.log("Summarize:");
+    console.log("Summarize:" + text);
 }
 
 function factCheckText(text) {
-    console.log("factCheckText: ");
+    console.log("factCheckText: " + text);
 }
