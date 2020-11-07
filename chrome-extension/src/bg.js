@@ -10,8 +10,15 @@ var factItem = {
     "contexts": ["selection"]
 };
 
+var smartSearch = {
+    "id": "search",
+    "title": "Smart Search",
+    "contexts": ["page"]
+};
+
 chrome.contextMenus.create(contextMenuItem);
 chrome.contextMenus.create(factItem);
+chrome.contextMenus.create(smartSearch);
 console.log("Test");
 
 chrome.contextMenus.onClicked.addListener(function(selectedText) {
@@ -24,6 +31,21 @@ chrome.contextMenus.onClicked.addListener(function(selectedText) {
         summarizeText(text)
     } else if (selectedText.menuItemId == "fact")
         factCheckText(text)
+    else if (selectedText.menuItemId == "search")
+    {
+
+        chrome.tabs.query(
+            { currentWindow: true, active: true },
+            function (tabArray) { 
+                var tab_id = tabArray[0].id; 
+                chrome.tabs.executeScript(tab_id,{
+                    code: 'document.body.innerText;'
+                    },receiveText);
+            }
+        );
+
+    }
+    
 });
 
 function summarizeText(text) {
@@ -33,18 +55,6 @@ function summarizeText(text) {
 function factCheckText(text) {
     console.log("factCheckText: " + text);
 }
-
-chrome.browserAction.onClicked.addListener(function(tab) {
-    console.log('Injecting content script(s)');
-    //On Firefox document.body.textContent is probably more appropriate
-    chrome.tabs.executeScript(tab.id,{
-        code: 'document.body.innerText;'
-        //If you had something somewhat more complex you can use an IIFE:
-        //code: '(function (){return document.body.innerText})();'
-        //If your code was complex, you should store it in a
-        // separate .js file, which you inject with the file: property.
-    },receiveText);
-});
 
 //tabs.executeScript() returns the results of the executed script
 //  in an array of results, one entry per frame in which the script
